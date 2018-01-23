@@ -65,7 +65,9 @@ public class TwoDTree<T extends Coordinate> {
                 return node;
             return findMin(node.getLeft(), horizontal, !isCurrentHorizontal);
         } else {
-            return KDNode.min3(findMin(node.getLeft(), horizontal, !isCurrentHorizontal), findMin(node.getRight(), horizontal, !isCurrentHorizontal), node, horizontal);
+            KDNode rightMin = findMin(node.getRight(), horizontal, !isCurrentHorizontal);
+            KDNode leftMin = findMin(node.getLeft(), horizontal, !isCurrentHorizontal);
+            return KDNode.min3(leftMin, rightMin, node, horizontal);
         }
     }
 
@@ -151,8 +153,8 @@ class KDNode<T extends  Coordinate> {
             return a;
 
         if (Coordinate.compare(a.getValue(), b.getValue(), horizontal) == 1)
-            return a;
-        return b;
+            return b;
+        return a;
     }
 
     public static KDNode min3(KDNode a, KDNode b, KDNode c, boolean horizontal){
