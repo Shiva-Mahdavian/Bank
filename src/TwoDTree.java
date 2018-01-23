@@ -3,7 +3,7 @@ import java.util.Queue;
 
 public class TwoDTree<T extends Coordinate> {
 
-    public KDNode<T> root;
+    private KDNode<T> root;
 
     public KDNode<T> getRoot() {
         return root;
@@ -92,7 +92,6 @@ public class TwoDTree<T extends Coordinate> {
             return null;
         }
         if (Coordinate.equal(currentNode.getValue(), coordinate)) {
-//            T result = currentNode.getValue();
             if (currentNode.getRight() != null) {
                 currentNode.setValue((T) findMin(currentNode.getRight(), isCurrentHorizontal, !isCurrentHorizontal).getValue());
                 currentNode.setRight(delete(currentNode.getRight(), currentNode.getValue(), !isCurrentHorizontal));
@@ -114,6 +113,42 @@ public class TwoDTree<T extends Coordinate> {
         }
         return currentNode;
     }
+
+
+
+
+    public T nearestNei(KDNode cNode, Coordinate point, double bDist, T best, boolean horizontal){
+        if (cNode == null)
+            return null;
+        if (Coordinate.dist(cNode.getValue(), point) < bDist){
+            best = (T) cNode.getValue();
+            bDist = Coordinate.dist(cNode.getValue(), point);
+        }
+        if (cNode.getRight() != null && cNode.getLeft() != null) {
+            if (Coordinate.isRightCloser(point, cNode.getValue(), horizontal)){
+                best = nearestNei(cNode.getRight(), point, bDist, best, !horizontal);
+                bDist = Coordinate.dist(cNode.getValue(), point);
+                double dist = Coordinate.distFromLine(point,cNode.getValue(),horizontal);
+                if (bDist > dist) {
+                    best = nearestNei(cNode.getLeft(), point, bDist, best, !horizontal);
+                }
+            } else {
+                best = nearestNei(cNode.getLeft(), point, bDist, best, !horizontal);
+                bDist = Coordinate.dist(cNode.getValue(), point);
+                double dist = Coordinate.distFromLine(point,cNode.getValue(),horizontal);
+                if (bDist > dist) {
+                    best = nearestNei(cNode.getRight(), point, bDist, best, !horizontal);
+                }
+            }
+        } else if (cNode.getLeft() != null){
+            best = nearestNei(cNode.getLeft(), point, bDist, best, !horizontal);
+        } else if (cNode.getRight() != null){
+            best = nearestNei(cNode.getRight(), point, bDist, best, !horizontal);
+        }
+        return best;
+
+    }
+
 
 }
 
@@ -155,6 +190,7 @@ class KDNode<T extends  Coordinate> {
     }
 
 
+
     public static KDNode min(KDNode a, KDNode b, boolean horizontal){
         if (a == null && b == null)
             return null;
@@ -176,26 +212,26 @@ class KDNode<T extends  Coordinate> {
     public static void main(String[] args) {
         TwoDTree<Branch> twoDTree = new TwoDTree<>();
         System.out.println("want to add");
-        twoDTree.insert(new Branch(35,60));
-        twoDTree.insert(new Branch(60,80));
+        twoDTree.insert(new Branch(34,90));
+        twoDTree.insert(new Branch(10,75));
+        twoDTree.insert(new Branch(25,10));
+        twoDTree.insert(new Branch(20,50));
+        twoDTree.insert(new Branch(70,80));
         twoDTree.insert(new Branch(80,40));
+        twoDTree.insert(new Branch(50,90));
+        twoDTree.insert(new Branch(70,30));
         twoDTree.insert(new Branch(90,60));
-        twoDTree.insert(new Branch(50,30));
-        twoDTree.insert(new Branch(70,25));
+        twoDTree.insert(new Branch(50,25));
         twoDTree.insert(new Branch(60,10));
-        twoDTree.insert(new Branch(20,45));
-        twoDTree.insert(new Branch(10,35));
-        twoDTree.insert(new Branch(20,20));
 
         System.out.println("finished" );
 
         System.out.println("root " + twoDTree.getRoot().getValue());
         System.out.println();
-        System.out.println("find " + twoDTree.find(twoDTree.getRoot(), new Branch(35,60), false));
         System.out.println();
-        twoDTree.delete(twoDTree.getRoot(), new Branch(35,60), false);
+        Branch b = twoDTree.nearestNei(twoDTree.getRoot(), new Coordinate(40,50), Double.MAX_VALUE, null, false);
+        System.out.println(b);
         System.out.println();
-        System.out.println("find " + twoDTree.find(twoDTree.getRoot(), new Branch(35,60), false));
 
 
 

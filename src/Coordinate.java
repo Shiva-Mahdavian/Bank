@@ -65,4 +65,20 @@ public class Coordinate
     public void setX(int x) {
         this.x = x;
     }
+
+    public static double dist (Coordinate a, Coordinate b) {
+        return Math.sqrt(Math.pow(a.getX() - b.getX(), 2) + Math.pow(a.getY() - b.getY(), 2));
+    }
+
+    public static double distFromLine(Coordinate point, Coordinate node, boolean horizontal){
+        if (horizontal)
+            return point.getY() - node.getY();
+        return  point.getX() - node.getX();
+    }
+
+    public static boolean isRightCloser(Coordinate point, Coordinate node, boolean horizontal) {
+        if (distFromLine(point, node, horizontal)> 0)
+            return true;
+        return false;
+    }
 }
