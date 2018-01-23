@@ -71,9 +71,20 @@ public class TwoDTree<T extends Coordinate> {
         }
     }
 
-    public KDNode delete(T node) {
-        return delete(root, node, false);
+    public T find (KDNode<T> currentNode, T coordinate, boolean isCurrentHorizontal) {
+        if (currentNode == null)
+            return null;
+        if (Coordinate.equal(coordinate, currentNode.getValue()))
+            return currentNode.getValue();
+        if (Coordinate.compare(currentNode.getValue(), coordinate, isCurrentHorizontal) == 1)
+            return (T) find(currentNode.getLeft(), coordinate, !isCurrentHorizontal);
+        return (T) find(currentNode.getRight(), coordinate, !isCurrentHorizontal);
     }
+
+
+//    public KDNode delete(T node) {
+//        return delete(root, node, false);
+//    }
 
     public KDNode delete(KDNode<T> currentNode, T coordinate, boolean isCurrentHorizontal){
         if (currentNode == null) {
@@ -180,12 +191,12 @@ class KDNode<T extends  Coordinate> {
 
         System.out.println("root " + twoDTree.getRoot().getValue());
         System.out.println();
-
-        twoDTree.bfsTest(twoDTree.getRoot());
+        System.out.println("find " + twoDTree.find(twoDTree.getRoot(), new Branch(35,60), false));
         System.out.println();
         twoDTree.delete(twoDTree.getRoot(), new Branch(35,60), false);
         System.out.println();
-        twoDTree.bfsTest(twoDTree.getRoot());
+        System.out.println("find " + twoDTree.find(twoDTree.getRoot(), new Branch(35,60), false));
+
 
 
     }
