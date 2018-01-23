@@ -4,6 +4,7 @@ import java.util.Queue;
 public class TwoDTree<T extends Coordinate> {
 
     private KDNode<T> root;
+    public Stack<T> stack;
 
     public KDNode<T> getRoot() {
         return root;
@@ -119,7 +120,7 @@ public class TwoDTree<T extends Coordinate> {
 
     public T nearestNei(KDNode cNode, Coordinate point, double bDist, T best, boolean horizontal){
         if (cNode == null)
-            return null;
+            return best;//TODO best seems more reasonable than null :-?
         if (Coordinate.dist(cNode.getValue(), point) < bDist){
             best = (T) cNode.getValue();
             bDist = Coordinate.dist(cNode.getValue(), point);
@@ -149,7 +150,31 @@ public class TwoDTree<T extends Coordinate> {
 
     }
 
+    public void recQuery(Coordinate a, Coordinate b){
+        //TODO new the stack?
+        query(this.getRoot(), a, b, 0, null, false, false);
+    }
 
+    public void circleQuery(double radius, Coordinate origin) {
+        //TODO new the stack?
+        Coordinate a = new Coordinate(origin.getX() - (int)radius, origin.getY() - (int)radius);
+        Coordinate b = new Coordinate(origin.getX() + (int)radius, origin.getY() + (int)radius);
+        query(this.getRoot(), a, b, radius, origin, false, true);
+    }
+
+    public void query(KDNode cNode, Coordinate a, Coordinate b, double r, Coordinate o, boolean horizontal, boolean isCircular){
+        if (cNode == null)
+            return;
+        if (cNode.getValue().containsInRange(a,b) && (!isCircular || Coordinate.dist(cNode.getValue(), o) < r))
+            stack.push((T) cNode.getValue());
+        if (cNode.getValue().hasIntersect(a, b, horizontal)){
+            query(cNode.getRight(), a, b, r, o, !horizontal , isCircular);
+            query(cNode.getLeft(), a, b, r, o, !horizontal, isCircular);
+        } else if (Coordinate.compare(cNode.getValue(), a, horizontal) == 1 && Coordinate.compare(cNode.getValue(), b, horizontal) == 1 ) {
+            query(cNode.getLeft(), a, b, r, o, !horizontal, isCircular);
+        } else
+            query(cNode.getRight(), a, b, r, o, !horizontal, isCircular);
+    }
 }
 
 
@@ -225,12 +250,14 @@ class KDNode<T extends  Coordinate> {
         twoDTree.insert(new Branch(60,10));
 
         System.out.println("finished" );
+        twoDTree.stack = new Stack<>();
+        twoDTree.recQuery(new Coordinate(10,60), new Coordinate(70, 100));
+        System.out.println();
+        System.out.println(twoDTree.stack.Empty());
+        twoDTree.stack.print();
 
-        System.out.println("root " + twoDTree.getRoot().getValue());
+
         System.out.println();
-        System.out.println();
-        Branch b = twoDTree.nearestNei(twoDTree.getRoot(), new Coordinate(40,50), Double.MAX_VALUE, null, false);
-        System.out.println(b);
         System.out.println();
 
 

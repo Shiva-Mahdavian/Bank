@@ -81,4 +81,30 @@ public class Coordinate
             return true;
         return false;
     }
+
+    public boolean containsInX (Coordinate a , Coordinate b) {
+        if ((a.getX() < this.getX() && b.getX() > this.getX()) || (b.getX() < this.getX() && a.getX() > this.getX()))
+            return true;
+        return false;
+    }
+
+    public boolean containsInY (Coordinate a, Coordinate b) {
+        if ((a.getY() < this.getY() && b.getY() > this.getY()) || (b.getY() < this.getY() && a.getY() > this.getY()))
+            return true;
+        return false;
+    }
+
+    public boolean hasIntersect(Coordinate a, Coordinate b, boolean isHorizontal) {
+        if (isHorizontal && this.containsInY(a, b))
+            return true;
+        if (!isHorizontal && this.containsInX(a, b))
+            return true;
+        return false;
+    }
+
+    public boolean containsInRange(Coordinate a , Coordinate b) {
+        if ( this.containsInX(a, b) && containsInY(a, b))
+            return  true;
+        return false;
+    }
 }
