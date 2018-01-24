@@ -100,6 +100,11 @@ public class Project {
         int a = scanner.nextInt();
         int b = scanner.nextInt();
         Branch branch = branches.nearestNeighbor(new Coordinate(a, b));
+        if (branch == null){
+            System.err.println("No bank");
+            return;
+        }
+
         System.out.println(branch.getBank() +  branch);
     }
 
@@ -123,17 +128,29 @@ public class Project {
     public static void bankWhithMaxNumOfBranches() {
         String name = null;
         int num = 0;
+        Stack<TrieNode> stack = new Stack<>();
         for (TrieNode tNode : banks.children) {
-            if (tNode != null && tNode.isEnd() && tNode.getData() != null) {
-                Bank b = (Bank) tNode.getData();
-                if (b != null && b.size > num) {
-                    num = b.size;
-                    name = b.name;
-                }
-
-            }
+            if (tNode != null)
+                stack.push(tNode);
         }
+        while (!stack.Empty()) {
+            TrieNode<Bank> tNode = stack.pop();
+            if (tNode != null && tNode.getData() != null && tNode.isEnd()) {
+                if (tNode.getData().size > num){
+                    num  = tNode.getData().size;
+                    name = tNode.getData().name;
+                }
+            }
+            for (TrieNode node : tNode.children) {
+                if (node != null)
+                    stack.push(node);
+            }
+
+        }
+
         if (name != null)
             System.out.println(name);
     }
+
+
 }

@@ -135,14 +135,14 @@ public class TwoDTree<T extends Coordinate> {
         if (cNode.getRight() != null && cNode.getLeft() != null) {
             if (Coordinate.isRightCloser(point, cNode.getValue(), horizontal)){
                 best = nearestNei(cNode.getRight(), point, bDist, best, !horizontal);
-                bDist = Coordinate.dist(cNode.getValue(), point);
+                bDist = Coordinate.dist(best, point);
                 double dist = Coordinate.distFromLine(point,cNode.getValue(),horizontal);
                 if (bDist > dist) {
                     best = nearestNei(cNode.getLeft(), point, bDist, best, !horizontal);
                 }
             } else {
                 best = nearestNei(cNode.getLeft(), point, bDist, best, !horizontal);
-                bDist = Coordinate.dist(cNode.getValue(), point);
+                bDist = Coordinate.dist(best, point);
                 double dist = Coordinate.distFromLine(point,cNode.getValue(),horizontal);
                 if (bDist > dist) {
                     best = nearestNei(cNode.getRight(), point, bDist, best, !horizontal);
@@ -239,35 +239,5 @@ class KDNode<T extends  Coordinate> {
     public static KDNode min3(KDNode a, KDNode b, KDNode c, boolean horizontal){
         return min(min(a, b, horizontal),c , horizontal);
     }
-
-
-    public static void main(String[] args) {
-        TwoDTree<Branch> twoDTree = new TwoDTree<>();
-        System.out.println("want to add");
-        twoDTree.insert(new Branch(34,90));
-        twoDTree.insert(new Branch(10,75));
-        twoDTree.insert(new Branch(25,10));
-        twoDTree.insert(new Branch(20,50));
-        twoDTree.insert(new Branch(70,80));
-        twoDTree.insert(new Branch(80,40));
-        twoDTree.insert(new Branch(50,90));
-        twoDTree.insert(new Branch(70,30));
-        twoDTree.insert(new Branch(90,60));
-        twoDTree.insert(new Branch(50,25));
-        twoDTree.insert(new Branch(60,10));
-
-        System.out.println("finished" );
-        twoDTree.stack = new Stack<>();
-        twoDTree.recQuery(new Coordinate(10,60), new Coordinate(70, 100));
-        System.out.println();
-        System.out.println(twoDTree.stack.Empty());
-        twoDTree.stack.print();
-
-
-        System.out.println();
-        System.out.println();
-
-
-
-    }
+    
 }
