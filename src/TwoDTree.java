@@ -1,6 +1,3 @@
-import java.util.LinkedList;
-import java.util.Queue;
-
 public class TwoDTree<T extends Coordinate> {
 
     private KDNode<T> root;
@@ -14,17 +11,19 @@ public class TwoDTree<T extends Coordinate> {
         this.root = null;
     }
 
-    public void insert(T node){
-        if (this.root == null)
+    public boolean insert(T node){
+        if (this.root == null) {
             this.root = new KDNode<>(node);
+            return true;
+        }
         else
-            insert(this.root, node, false);
+            return  insert(this.root, node, false);
     }
 
-    public void insert (KDNode root, T node , boolean horizontal) {
+    public boolean insert (KDNode root, T node , boolean horizontal) {
         if (Coordinate.equal(root.getValue(), node)){
             System.err.println("The inserted node, already exists! " + node.toString());
-            return;
+            return false;
         }
         int cmpr = Coordinate.compare(root.getValue(), node, horizontal);
         if (cmpr == 1) {
@@ -38,19 +37,21 @@ public class TwoDTree<T extends Coordinate> {
             else
                 insert(root.getRight(), node, !horizontal);
         }
+        return true;
     }
 
-    public void bfsTest(KDNode root) {
-        Queue<KDNode> queue = new LinkedList<>();
-        queue.add(root);
-        while (!queue.isEmpty()) {
-            KDNode node = queue.poll();
-            if (node.getLeft() != null)
-                queue.add(node.getLeft());
-            if (node.getRight() != null)
-                queue.add(node.getRight());
-            System.out.println(node.getValue());
-        }
+
+    public void print() {
+        if (this.root == null)
+            return;
+        print (this.root);
+    }
+    public void print(KDNode node) {
+        System.out.println(node.getValue());
+       if (node.getRight() != null)
+           print(node.getRight());
+       if (node.getLeft() != null)
+           print(node.getLeft());
     }
 
 //TODO do i need this one below?
@@ -72,6 +73,10 @@ public class TwoDTree<T extends Coordinate> {
         }
     }
 
+    public T find (T coordinate) {
+        return find(this.getRoot(), coordinate, false);
+    }
+
     public T find (KDNode<T> currentNode, T coordinate, boolean isCurrentHorizontal) {
         if (currentNode == null)
             return null;
@@ -83,9 +88,9 @@ public class TwoDTree<T extends Coordinate> {
     }
 
 
-//    public KDNode delete(T node) {
-//        return delete(root, node, false);
-//    }
+    public KDNode delete(T node) {
+        return delete(this.getRoot(), node, false);
+    }
 
     public KDNode delete(KDNode<T> currentNode, T coordinate, boolean isCurrentHorizontal){
         if (currentNode == null) {
@@ -116,7 +121,9 @@ public class TwoDTree<T extends Coordinate> {
     }
 
 
-
+    public T nearestNeighbor(Coordinate point) {
+            return nearestNei(this.getRoot(), point, Double.MAX_VALUE,null, false);
+    }
 
     public T nearestNei(KDNode cNode, Coordinate point, double bDist, T best, boolean horizontal){
         if (cNode == null)
@@ -151,12 +158,12 @@ public class TwoDTree<T extends Coordinate> {
     }
 
     public void recQuery(Coordinate a, Coordinate b){
-        //TODO new the stack?
+        stack = new Stack<>();
         query(this.getRoot(), a, b, 0, null, false, false);
     }
 
     public void circleQuery(double radius, Coordinate origin) {
-        //TODO new the stack?
+        stack = new Stack<>();
         Coordinate a = new Coordinate(origin.getX() - (int)radius, origin.getY() - (int)radius);
         Coordinate b = new Coordinate(origin.getX() + (int)radius, origin.getY() + (int)radius);
         query(this.getRoot(), a, b, radius, origin, false, true);
